@@ -412,6 +412,7 @@ class Interchange:
                 # We set up an entry only if registration works correctly
                 self._ready_managers[manager_id] = {'last_heartbeat': time.time(),
                                                     'idle_since': time.time(),
+                                                    'creation_time': time.time(),
                                                     'block_id': None,
                                                     'max_capacity': 0,
                                                     'worker_count': 0,
