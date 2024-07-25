@@ -19,12 +19,12 @@ from parsl import curvezmq
 from parsl.app.errors import RemoteExceptionWrapper
 from parsl.executors.high_throughput.errors import ManagerLost, VersionMismatch
 from parsl.executors.high_throughput.manager_record import ManagerRecord
+from parsl.executors.high_throughput.manager_selector import ManagerSelectorBase
 from parsl.monitoring.message_type import MessageType
 from parsl.process_loggers import wrap_with_logs
 from parsl.serialize import serialize as serialize_object
 from parsl.utils import setproctitle
 from parsl.version import VERSION as PARSL_VERSION
-from parsl.executors.high_throughput.manager_selector import ManagerSelectorBase
 
 PKL_HEARTBEAT_CODE = pickle.dumps((2 ** 32) - 1)
 PKL_DRAINED_CODE = pickle.dumps((2 ** 32) - 2)
@@ -412,6 +412,7 @@ class Interchange:
                 # We set up an entry only if registration works correctly
                 self._ready_managers[manager_id] = {'last_heartbeat': time.time(),
                                                     'idle_since': time.time(),
+                                                    'creation_time': time.time(),
                                                     'block_id': None,
                                                     'max_capacity': 0,
                                                     'worker_count': 0,
