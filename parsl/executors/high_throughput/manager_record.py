@@ -14,7 +14,6 @@ class ManagerRecord(TypedDict, total=False):
     hostname: str
     last_heartbeat: float
     idle_since: Optional[float]
-    creation_time: float
     timestamp: datetime
     parsl_version: str
     python_version: str
