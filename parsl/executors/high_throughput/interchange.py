@@ -6,7 +6,6 @@ import os
 import pickle
 import platform
 import queue
-import random
 import signal
 import sys
 import threading
@@ -162,6 +161,9 @@ class Interchange:
         self.connected_block_history: List[str] = []
 
         self.heartbeat_threshold = heartbeat_threshold
+
+        assert manager_selector is not None, "Undefined manager_selector"
+        self.manager_selector = manager_selector
 
         self.current_platform = {'parsl_v': PARSL_VERSION,
                                  'python_v': "{}.{}.{}".format(sys.version_info.major,
@@ -488,8 +490,8 @@ class Interchange:
             interesting=len(interesting_managers)))
 
         if interesting_managers and not self.pending_task_queue.empty():
-            shuffled_managers = list(interesting_managers)
-            random.shuffle(shuffled_managers)
+            unsorted_managers = list(interesting_managers)
+            shuffled_managers = self.manager_selector.sort_managers(self._ready_managers, unsorted_managers)
 
             while shuffled_managers and not self.pending_task_queue.empty():  # cf. the if statement above...
                 manager_id = shuffled_managers.pop()

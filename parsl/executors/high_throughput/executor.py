@@ -20,6 +20,10 @@ from parsl.data_provider.staging import Staging
 from parsl.executors.errors import BadMessage, ScalingFailed
 from parsl.executors.high_throughput import zmq_pipes
 from parsl.executors.high_throughput.errors import CommandClientTimeoutError
+from parsl.executors.high_throughput.manager_selector import (
+    ManagerSelectorBase,
+    ManagerSelectorRandom,
+)
 from parsl.executors.high_throughput.mpi_prefix_composer import (
     VALID_LAUNCHERS,
     validate_resource_spec,
@@ -33,7 +37,6 @@ from parsl.serialize import deserialize, pack_res_spec_apply_message
 from parsl.serialize.errors import DeserializationError, SerializationError
 from parsl.usage_tracking.api import UsageInformation
 from parsl.utils import RepresentationMixin
-from parsl.executors.high_throughput.manager_selector import ManagerSelectorBase, ManagerSelectorRandom
 
 logger = logging.getLogger(__name__)
 
