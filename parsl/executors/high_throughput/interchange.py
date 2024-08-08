@@ -131,7 +131,7 @@ class Interchange:
         self.hub_address = hub_address
         self.hub_zmq_port = hub_zmq_port
 
-        self.pending_task_queue: queue.Queue[Any] = queue.Queue(maxsize=10 ** 6)
+        self.pending_task_queue: queue.PriorityQueue[Any] = queue.PriorityQueue(maxsize=10 ** 6)
         self.count = 0
 
         self.worker_ports = worker_ports
@@ -193,7 +193,7 @@ class Interchange:
         tasks = []
         for _ in range(0, count):
             try:
-                x = self.pending_task_queue.get(block=False)
+                _, x = self.pending_task_queue.get(block=False)
             except queue.Empty:
                 break
             else:
@@ -219,7 +219,12 @@ class Interchange:
                 continue
 
             logger.debug("putting message onto pending_task_queue")
-            self.pending_task_queue.put(msg)
+            resource_spec = msg.get('resource_spec', {})
+            if 'priority' in resource_spec:
+                priority = resource_spec['priority']
+                self.pending_task_queue.put((priority, msg))
+            else:
+                self.pending_task_queue.put((sys.maxsize, msg))
             task_counter += 1
             logger.debug(f"Fetched {task_counter} tasks so far")
 
