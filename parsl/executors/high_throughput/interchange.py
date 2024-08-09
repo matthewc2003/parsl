@@ -193,7 +193,7 @@ class Interchange:
         tasks = []
         for _ in range(0, count):
             try:
-                _, x = self.pending_task_queue.get(block=False)
+                _, _, x = self.pending_task_queue.get(block=False)
             except queue.Empty:
                 break
             else:
@@ -222,9 +222,9 @@ class Interchange:
             resource_spec = msg.get('resource_spec', {})
             if 'priority' in resource_spec:
                 priority = resource_spec['priority']
-                self.pending_task_queue.put((priority, msg))
+                self.pending_task_queue.put((priority, task_counter + 1, msg))
             else:
-                self.pending_task_queue.put((sys.maxsize, msg))
+                self.pending_task_queue.put((sys.maxsize, task_counter + 1, msg))
             task_counter += 1
             logger.debug(f"Fetched {task_counter} tasks so far")
 
